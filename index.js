@@ -1,3 +1,4 @@
+require('chromedriver')
 const {Builder, By, Key } = require(`selenium-webdriver`)
 const inquirer = require(`inquirer`)
 const sqlite = require(`sqlite`)
@@ -84,7 +85,7 @@ const main = async () => {
                 message: `Unit Number?`,
                 default: choiceDefaults.credentials.unitNumber
             }
-        ]);
+        ])
 
         if(choiceDefaults.credentials.email === `` || (choiceDefaults.credentials.email !== promptChoices.email)) {
             await db.run(`DELETE FROM credentials`)
@@ -144,7 +145,11 @@ const main = async () => {
                 await driver.findElement(By.css(`a[href*="userLogin"]`)).click()
                 await driver.findElement(By.name(`user[login]`)).sendKeys(promptChoices.email)
                 await driver.findElement(By.name(`user[password]`)).sendKeys(promptChoices.pw, Key.RETURN)
-                await driver.wait(() => driver.findElement(By.xpath(`//*[contains(text(),"The Site Code may be obtained from the Property Manager. PLEASE PROVIDE THE FOLLOWING INFO")]`)).isDisplayed(),10000)
+                try {
+                    await driver.wait(() => driver.findElement(By.xpath(`//*[contains(text(),"The Site Code may be obtained from the Property Manager. PLEASE PROVIDE THE FOLLOWING INFO")]`)).isDisplayed(),10000)
+                } catch (e) {
+                    console.warn(`ERROR: Unable to login. Check credentials and try again`)
+                }
                 await driver.findElement(By.name(`lots`)).sendKeys(promptChoices.lot)
                 await driver.findElement(By.name(`site_code`)).sendKeys(promptChoices.siteCode)
                 await driver.findElement(By.name(`unit_number`)).sendKeys(promptChoices.unitNumber)
@@ -157,4 +162,4 @@ const main = async () => {
                 await driver.quit()
             }
         }
-        main()
+        main().catch(e => console.log())
