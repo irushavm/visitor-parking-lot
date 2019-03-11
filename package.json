@@ -5,13 +5,15 @@
   "main": "index.js",
   "dependencies": {
     "chromedriver": "^2.46.0",
+    "env-paths": "^2.1.0",
     "inquirer": "^6.2.2",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "sqlite": "^3.0.2"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "rm visitor-parking-lot.exe && nexe --clean && nexe index.js "
   },
   "author": "",
   "license": "ISC"
