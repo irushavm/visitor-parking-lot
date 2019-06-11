@@ -115,7 +115,7 @@ const main = async () => {
 
     if (choiceDefaults.credentials.email === `` || (choiceDefaults.credentials.email !== promptChoices.email)) {
         await db.run(`DELETE FROM credentials`)
-        await db.run(`INSERT INTO credentials(email, lot, site_code, unit_number) VALUES ("${promptChoices.email}", "${promptChoices.lot}", "${promptChoices.siteCode}", "${promptChoices.unitNumber}")`)
+        await db.run(`INSERT INTO credentials(email, lot, site_code, unit_number) VALUES (?,?,?,?);`, promptChoices.email, promptChoices.lot, promptChoices.siteCode, promptChoices.unitNumber)
     }
 
 
@@ -155,11 +155,11 @@ const main = async () => {
         await db.run(`
             INSERT
             INTO cars(name, province, plate)
-            VALUES (
-                "${promptChoices.newRegisterName}",
-                "${promptChoices.newRegisterProvince}",
-                "${promptChoices.newRegisterPlate}"
-                )`
+            VALUES (?,?,?)`
+        ,
+            promptChoices.newRegisterName,
+            promptChoices.newRegisterProvince,
+            promptChoices.newRegisterPlate
         )
 
         choiceDefaults.cars.concat({
